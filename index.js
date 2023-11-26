@@ -27,42 +27,52 @@ function calculateTax(income) {
   return tax;
 }
 
-// Tax and UIF calculation function with additional deductions
-function calculateTaxAndUIF(netMonthlyPay, medicalAidDeduction = 0, otherDeductions = 0) {
-  if (netMonthlyPay <= 0 || isNaN(netMonthlyPay)) {
-    throw new Error('Net monthly pay should be a positive number.');
+// Function to calculate UIF benefit based on months worked
+function calculateUIFBenefit(netMonthlyPay, monthsWorked) {
+  const totalMonthsInYear = 12;
+  const totalYearsWorked = monthsWorked / totalMonthsInYear;
+
+  // UIF calculation (employee contribution)
+  const uifEmployeeContribution = netMonthlyPay * 0.01; // 1% of net monthly pay
+
+  // Calculate UIF benefit based on years worked
+  let uifBenefit = 0;
+  if (totalYearsWorked >= 1 && totalYearsWorked < 2) {
+    uifBenefit = netMonthlyPay * 0.3; // Example: 30% of net monthly pay for 1 year worked
+  } else if (totalYearsWorked >= 2 && totalYearsWorked < 3) {
+    uifBenefit = netMonthlyPay * 0.35; // Example: 35% of net monthly pay for 2 years worked
+  } else if (totalYearsWorked >= 3) {
+    uifBenefit = netMonthlyPay * 0.45; // Example: 45% of net monthly pay for 3 or more years worked
   }
 
-  const taxableIncome = netMonthlyPay - medicalAidDeduction - otherDeductions;
-  if (taxableIncome < 0) {
-    throw new Error('Deductions exceed the net monthly pay.');
-  }
-
-  const tax = calculateTax(taxableIncome);
-  const uif = netMonthlyPay * 0.02; // 2% UIF deduction (example)
-
-  const afterTaxAndUIF = netMonthlyPay - tax - uif - medicalAidDeduction - otherDeductions;
-  return { tax, uif, medicalAidDeduction, otherDeductions, afterTaxAndUIF };
+  return uifBenefit;
 }
 
-app.get('/', (req, res) => {
-  res.send('We are live, babe!'); // Send a message to indicate the server is live
-});
-
-// API endpoint to calculate tax, UIF, and deductions
+// API endpoint to calculate tax, UIF benefits, and deductions based on net monthly pay and months worked
 app.post('/calculate', (req, res) => {
-  try {
-    const { netMonthlyPay, medicalAidDeduction = 0, otherDeductions = 0 } = req.body;
+  const { netMonthlyPay, monthsWorked, medicalAidDeduction = 0, otherDeductions = 0 } = req.body;
 
-    const result = calculateTaxAndUIF(netMonthlyPay, medicalAidDeduction, otherDeductions);
-    return res.json(result);
+  try {
+    if (netMonthlyPay <= 0 || isNaN(netMonthlyPay) || monthsWorked <= 0 || isNaN(monthsWorked)) {
+      throw new Error('Net monthly pay and months worked should be positive numbers.');
+    }
+
+    const taxableIncome = netMonthlyPay - medicalAidDeduction - otherDeductions;
+    const tax = calculateTax(taxableIncome);
+    const uifBenefit = calculateUIFBenefit(netMonthlyPay, monthsWorked);
+
+    // Return the calculated tax, UIF benefit, and net UIF after deducting tax and deductions
+    res.json({
+      tax,
+      uifBenefit,
+      netUIFAfterTaxAndDeductions: uifBenefit - tax // Net UIF after deducting tax
+    });
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message }); // Handle any errors
   }
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Replace '3000' with your desired port number
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
 });
