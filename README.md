@@ -13,7 +13,7 @@ This Node.js API calculates UIF (Unemployment Insurance Fund) deductions and tax
 
 To use this API, follow these steps:
 
-1. Clone this repository: `git clone https://github.com/your-username/uif-tax-calculator.git`
+1. Clone this repository: `git clone https://github.com/Banel-Mgwevu/uif-tax-calculator.git`
 2. Install dependencies: `npm install`
 3. Start the server: `node index.js`
 4. Access the API using HTTP requests (e.g., Postman).
