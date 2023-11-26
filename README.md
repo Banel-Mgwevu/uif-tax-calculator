@@ -52,8 +52,4 @@ Adjust the input values (`netMonthlyPay`, `medicalAidDeduction`, `otherDeduction
 
 ## Contributions
 
-Contributions to improve and expand the functionality of this API are welcome! Feel free to submit issues or pull requests.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+Contributions are welcome. Feel free to open issues and pull requests to suggest changes or improvements.
