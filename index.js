@@ -45,6 +45,10 @@ function calculateTaxAndUIF(netMonthlyPay, medicalAidDeduction = 0, otherDeducti
   return { tax, uif, medicalAidDeduction, otherDeductions, afterTaxAndUIF };
 }
 
+app.get('/', (req, res) => {
+  res.send('We are live, babe!'); // Send a message to indicate the server is live
+});
+
 // API endpoint to calculate tax, UIF, and deductions
 app.post('/calculate', (req, res) => {
   try {
